@@ -60,24 +60,13 @@
   .scroll-down-hint svg { width: 20px; height: 20px; }
   @keyframes bounce-down { 0%, 100% { transform: translateX(50%) translateY(0); } 50% { transform: translateX(50%) translateY(6px); } }
 
-  /* ════════ زخارف الصور الجانبية (Decorations) ════════ */
-  .deco-img {
-    position: absolute;
-    width: 180px; /* يمكنك تغيير حجم الصور من هنا */
-    opacity: 0.85;
-    z-index: 1; /* تجعلها خلف النصوص لكن فوق الخلفية */
-    pointer-events: none; /* مهم جداً: تمنع الصورة من حجب الضغط على الأزرار */
-    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
-  }
+  /* ════════ زخارف الصور الجانبية ════════ */
+  .deco-img { position: absolute; width: 180px; opacity: 0.85; z-index: 1; pointer-events: none; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1)); }
   .deco-left { top: 20px; left: -40px; transform: rotate(15deg); }
   .deco-right { bottom: 20px; right: -40px; transform: rotate(-15deg) scaleY(-1); }
   .deco-top-right { top: -30px; right: -30px; width: 150px; }
   .deco-bottom-left { bottom: -30px; left: -30px; width: 150px; transform: rotate(180deg); }
-  
-  @media (max-width: 768px) {
-    .deco-img { width: 110px; opacity: 0.6; } /* تصغير الزخارف في الجوال لكي لا تزحم الشاشة */
-    .deco-left { left: -20px; } .deco-right { right: -20px; }
-  }
+  @media (max-width: 768px) { .deco-img { width: 110px; opacity: 0.6; } .deco-left { left: -20px; } .deco-right { right: -20px; } }
 
   /* ════════ DETAILS SECTION ════════ */
   #details { background: rgba(250, 246, 233, 0.93); backdrop-filter: blur(3px); padding: 70px 24px 60px; text-align: center; position: relative; overflow: hidden; }
@@ -250,7 +239,7 @@
         <input type="text" id="name" placeholder="الاسم الثلاثي" autocomplete="name">
       </div>
       <div class="form-group">
-        <label for="phone">رقم الجوال</label>
+        <label for="phone">رقم الجوال *</label>
         <input type="tel" id="phone" placeholder="96812345678" dir="ltr" autocomplete="tel">
       </div>
       <button class="submit-btn" id="submit-btn" onclick="submitRsvp()">تأكيد الحضور</button>
@@ -324,7 +313,41 @@ function openInvitation(e) { const btn = document.getElementById('seal-btn'); co
 function toggleSound() { const v = document.getElementById('wedding-video'); const b = document.getElementById('sound-btn'); if (!v) return; v.muted = !v.muted; if (!v.muted) { v.play().catch(()=>{}); b.innerHTML = '<span id="sound-icon">🔊</span> كتم الصوت'; } else { b.innerHTML = '<span id="sound-icon">🔇</span> تشغيل الصوت'; } }
 
 async function checkStatus() { try { const res = await callScript({ action:'status' }, 2); if (res && res.registrationOpen === false) { document.getElementById('rsvp-form').style.display = 'none'; document.getElementById('closed-msg').style.display = 'block'; } } catch(e) { } }
-async function submitRsvp() { const name = document.getElementById('name').value.trim(); const phone = document.getElementById('phone').value.trim(); const msgEl = document.getElementById('form-msg'); const btn = document.getElementById('submit-btn'); msgEl.innerHTML = ''; if (!name) { msgEl.innerHTML = '<div class="msg msg-error">⚠️ الرجاء إدخال الاسم الكامل</div>'; return; } btn.disabled = true; btn.textContent = 'جاري التسجيل...'; try { const res = await callScript({ action:'rsvp', name:name, phone:phone }); if (res.status === 'success' || res.status === 'exists') { showSuccess(res.name || name, res.code); if (res.status === 'exists') { msgEl.innerHTML = '<div class="msg msg-success">ℹ️ هذا الرقم مسجّل مسبقاً — هذه بطاقتك.</div>'; } } else if (res.status === 'closed') { document.getElementById('rsvp-form').style.display = 'none'; document.getElementById('closed-msg').style.display = 'block'; } else { msgEl.innerHTML = '<div class="msg msg-error">⚠️ ' + (res.message || 'حدث خطأ، حاول مجدداً') + '</div>'; } } catch(e) { msgEl.innerHTML = '<div class="msg msg-error">⚠️ تعذّر الاتصال بالخادم — تأكد من الإنترنت وحاول مرة أخرى</div>'; } btn.disabled = false; btn.textContent = 'تأكيد الحضور'; }
+
+/* ════════════ تأكيد الحضور (تم جعل الهاتف مطلوباً) ════════════ */
+async function submitRsvp() {
+  const name  = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const msgEl = document.getElementById('form-msg');
+  const btn   = document.getElementById('submit-btn');
+  msgEl.innerHTML = '';
+  
+  // التحقق من الاسم ورقم الهاتف (كلاهما إجباري الآن)
+  if (!name || !phone) { 
+    msgEl.innerHTML = '<div class="msg msg-error">⚠️ الرجاء إدخال الاسم الكامل ورقم الجوال</div>'; 
+    return; 
+  }
+
+  btn.disabled = true; btn.textContent = 'جاري التسجيل...';
+  try {
+    const res = await callScript({ action:'rsvp', name:name, phone:phone });
+    if (res.status === 'success' || res.status === 'exists') {
+      showSuccess(res.name || name, res.code);
+      if (res.status === 'exists') {
+        msgEl.innerHTML = '<div class="msg msg-success">ℹ️ هذا الرقم مسجّل مسبقاً — هذه بطاقتك.</div>';
+      }
+    } else if (res.status === 'closed') {
+      document.getElementById('rsvp-form').style.display = 'none';
+      document.getElementById('closed-msg').style.display = 'block';
+    } else {
+      msgEl.innerHTML = '<div class="msg msg-error">⚠️ ' + (res.message || 'حدث خطأ، حاول مجدداً') + '</div>';
+    }
+  } catch(e) {
+    msgEl.innerHTML = '<div class="msg msg-error">⚠️ تعذّر الاتصال بالخادم — تأكد من الإنترنت أو من إعدادات النشر في Apps Script</div>';
+  }
+  btn.disabled = false; btn.textContent = 'تأكيد الحضور';
+}
+
 function showSuccess(name, code) { document.getElementById('sc-name').textContent = 'أهلاً ' + name; document.getElementById('sc-code').textContent = code; const sum = document.getElementById('success-summary'); sum.innerHTML = '📅 الخميس ٦ / ٨ / ٢٠٢٦<br>🕗 ٨ مساءً<br>🏛️ قاعة المرايا - الخوض'; sum.style.display = 'block'; buildCard(name, code); const card = document.getElementById('success-card'); card.classList.add('show'); card.scrollIntoView({ behavior:'smooth', block:'center' }); }
 
 async function submitMessage() { const name = document.getElementById('gb-name').value.trim(); const message = document.getElementById('gb-message').value.trim(); const msgEl = document.getElementById('gb-form-msg'); const btn = document.getElementById('gb-submit-btn'); msgEl.innerHTML = ''; if (!name || !message) { msgEl.innerHTML = '<div class="msg msg-error">⚠️ الرجاء إدخال الاسم والرسالة</div>'; return; } btn.disabled = true; btn.textContent = 'جاري الإرسال...'; try { const res = await callScript({ action:'addMessage', name:name, message:message }); if (res.status === 'success') { document.getElementById('gb-form').innerHTML = '<div class="msg msg-success" style="padding:24px; font-size:16px;">🎉 شكراً لك! تم إرسال تهنئتك بنجاح.<br>دعواتك تزيدنا شرفاً وسروراً.</div>'; } else { msgEl.innerHTML = '<div class="msg msg-error">⚠️ ' + (res.message || 'حدث خطأ، حاول مجدداً') + '</div>'; } } catch(e) { msgEl.innerHTML = '<div class="msg msg-error">⚠️ تعذّر الاتصال بالخادم — تأكد من الإنترنت وحاول مرة أخرى</div>'; } btn.disabled = false; btn.textContent = 'إرسال التهنئة'; }
