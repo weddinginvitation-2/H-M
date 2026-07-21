@@ -14,20 +14,19 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@700;800&display=swap" rel="stylesheet">
-<script src="qrcode.min.js"></script>
+<!-- تم استبدال المسار المحلي برابط CDN لضمان ظهور رمز QR -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-  * { font-synthesis: weight style; }
   :root {
     --cream: #FAF6E9;        --ivory: #F0EAD6;        --green: #2E7D32;
     --green-dark: #1B5E20;   --green-light: #4CAF50;  --charcoal: #1B2E1C;
     --warm-gray: #8C8676;    --gold: #D4AF37;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-synthesis: weight style; }
   html { scroll-behavior: smooth; }
   body { font-weight: 700; font-family: 'Amiri Quran','Amiri',serif; background: var(--cream); color: var(--charcoal); overflow-x: hidden; }
   body.locked { overflow: hidden; height: 100vh; }
 
-  /* COVER PAGE */
   #cover { position: fixed; inset: 0; z-index: 100; background: #B3453A; transition: opacity 0.8s ease, transform 0.8s ease; overflow: hidden; }
   #cover.fade-out { opacity: 0; transform: scale(1.15); pointer-events: none; }
   #cover.hidden { display: none; }
@@ -47,11 +46,9 @@
   .hint-text { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); font-size: 15px; color: #fff; background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 20px; white-space: nowrap; animation: float-hint 3s ease-in-out infinite; }
   @keyframes float-hint { 0%, 100% { opacity: 0.8; transform: translateX(-50%) translateY(0); } 50% { opacity: 1; transform: translateX(-50%) translateY(-5px); } }
 
-  /* MAIN PAGE */
   #main-page { opacity: 0; transition: opacity 0.6s ease 0.4s; background-image: url('background.jpg'); background-size: cover; background-position: center center; background-repeat: no-repeat; background-attachment: fixed; }
   #main-page.visible { opacity: 1; }
 
-  /* VIDEO SECTION */
   #video-section { position: relative; width: 100%; height: 100svh; background: #0d1f0d; overflow: hidden; display: flex; align-items: center; justify-content: center; }
   #wedding-video { width: 100%; height: 100%; object-fit: contain; }
   #sound-btn { position: absolute; bottom: 24px; left: 24px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 18px; border-radius: 30px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px; z-index: 10; }
@@ -60,7 +57,6 @@
   .scroll-down-hint svg { width: 20px; height: 20px; }
   @keyframes bounce-down { 0%, 100% { transform: translateX(50%) translateY(0); } 50% { transform: translateX(50%) translateY(6px); } }
 
-  /* DECORATIONS */
   .deco-img { position: absolute; width: 180px; opacity: 0.85; z-index: 1; pointer-events: none; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1)); }
   .deco-left { top: 20px; left: -40px; transform: rotate(15deg); }
   .deco-right { bottom: 20px; right: -40px; transform: rotate(-15deg) scaleY(-1); }
@@ -68,7 +64,6 @@
   .deco-bottom-left { bottom: -30px; left: -30px; width: 150px; transform: rotate(180deg); }
   @media (max-width: 768px) { .deco-img { width: 110px; opacity: 0.6; } .deco-left { left: -20px; } .deco-right { right: -20px; } }
 
-  /* DETAILS SECTION */
   #details { background: rgba(250, 246, 233, 0.93); backdrop-filter: blur(3px); padding: 70px 24px 60px; text-align: center; position: relative; overflow: hidden; }
   #details::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1px; height: 50px; background: linear-gradient(to bottom, transparent, var(--green)); }
   .section-ornament { position: relative; z-index: 2; color: var(--green); font-size: 22px; letter-spacing: 6px; margin-bottom: 8px; opacity: 0.7; }
@@ -86,7 +81,6 @@
   .note { display: flex; align-items: center; gap: 12px; text-align: right; background: white; border: 1px dashed var(--green); border-radius: 12px; padding: 13px 16px; font-size: 14.5px; line-height: 1.7; color: var(--charcoal); }
   .note .n-icon { font-size: 20px; flex-shrink: 0; } .note em { font-style: italic; color: var(--green-dark); }
 
-  /* COUNTDOWN */
   .countdown-wrap { position: relative; z-index: 2; max-width: 460px; margin: 28px auto 4px; background: linear-gradient(140deg, var(--green) 0%, var(--green-dark) 100%); border-radius: 22px; padding: 26px 22px 24px; box-shadow: 0 10px 30px rgba(46,125,50,0.28); overflow: hidden; }
   .countdown-wrap::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 15% 20%, rgba(255,255,255,0.12), transparent 40%), radial-gradient(circle at 85% 90%, rgba(255,255,255,0.08), transparent 45%); pointer-events: none; }
   .countdown-label { position: relative; text-align: center; color: #fff; font-family: 'Aref Ruqaa',serif; font-size: 20px; font-weight: 700; margin-bottom: 18px; }
@@ -99,7 +93,6 @@
   .calendar-btn { position: relative; display: inline-flex; align-items: center; gap: 8px; margin: 20px auto 0; width: 100%; justify-content: center; background: rgba(255,255,255,0.95); color: var(--green-dark); border: none; padding: 12px 20px; border-radius: 30px; cursor: pointer; font-size: 15.5px; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
   .calendar-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
 
-  /* FORM SECTIONS */
   #rsvp, #guestbook { padding: 60px 24px 80px; text-align: center; position: relative; backdrop-filter: blur(3px); overflow: hidden; }
   #rsvp { background: rgba(240, 234, 214, 0.93); }
   #guestbook { background: rgba(250, 246, 233, 0.93); }
@@ -127,7 +120,6 @@
   footer { background: rgba(27, 46, 28, 0.95); color: rgba(255,255,255,0.5); text-align: center; padding: 24px; font-size: 13px; }
   footer span { color: var(--green-light); }
   
-  /* LOADING OVERLAY */
   #loading { position: fixed; inset: 0; background: var(--cream); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s; }
   #loading.hidden { opacity: 0; display: none !important; pointer-events: none; }
   .loader-ring { width: 50px; height: 50px; border: 3px solid var(--ivory); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -138,10 +130,8 @@
 </head>
 <body>
 
-<!-- شاشة التحميل -->
 <div id="loading"><div class="loader-ring"></div></div>
 
-<!-- الظرف -->
 <div id="cover">
   <div class="envelope-wrapper" id="envelope-wrapper">
     <img id="envelope-img" src="envelope.jpg" alt="دعوة زفاف حاتم ومآثر">
@@ -155,7 +145,6 @@
   </div>
 </div>
 
-<!-- المحتوى -->
 <div id="main-page">
 
 <section id="video-section">
@@ -293,7 +282,6 @@
 </div>
 
 <script>
-// إخفاء شاشة التحميل إجبارياً بعد 3 ثوانٍ كحد أقصى (حماية ضد التعليق)
 setTimeout(function() {
   var loader = document.getElementById('loading');
   if (loader) loader.classList.add('hidden');
@@ -445,7 +433,7 @@ async function submitMessage() {
 
   btn.disabled = true; btn.textContent = 'جاري الإرسال...';
   try {
-    const res = await callScript({ action:'addMessage', name:name, message:message });
+    const res = await callScript({ action:'addmessage', name:name, message:message });
     if (res.status === 'success') {
       document.getElementById('gb-form').innerHTML = '<div class="msg msg-success" style="padding:24px; font-size:16px;">🎉 شكراً لك! تم إرسال تهنئتك بنجاح.<br>دعواتك تزيدنا شرفاً وسروراً.</div>';
     } else {
