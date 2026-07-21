@@ -5,14 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة إدارة الزفاف — حاتم & مآثر</title>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-<!-- تم تعديل المسار ليقرأ الملف المحلي من GitHub -->
 <script src="qrcode.min.js"></script>
 <style>
-  :root {
-    --night:#1B5E20; --night-2:#2E7D32; --gold:#D4AF37; --gold-light:#F0EAD6;
-    --ivory:#FAF6E9; --sand:#F0EAD6; --ink:#1B2E1C; --muted:#8C8676;
-    --red:#B3453A; --green-ok:#1e8449;
-  }
+  :root { --night:#1B5E20; --night-2:#2E7D32; --gold:#D4AF37; --gold-light:#F0EAD6; --ivory:#FAF6E9; --sand:#F0EAD6; --ink:#1B2E1C; --muted:#8C8676; --red:#B3453A; --green-ok:#1e8449; }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:'Amiri',serif; background:var(--ivory); color:var(--ink); min-height:100vh; }
 
@@ -143,13 +138,12 @@
     <button class="nav-item" onclick="showPage('guests',this)"><span class="icon">👥</span> إدارة الضيوف</button>
     <button class="nav-item" onclick="showPage('attendance',this)"><span class="icon">✅</span> سجل الحضور</button>
     <button class="nav-item" onclick="showPage('add-guest',this)"><span class="icon">➕</span> إضافة ضيف</button>
-    <button class="nav-item" onclick="showPage('messages',this)"><span class="icon">💌</span> رسائل التهاني</button>
+    <button class="nav-item" onclick="showPage('messages',this)"><span class="icon">💌</span> رسائل وصدقات</button>
     <button class="nav-item" onclick="window.open('scanner.html','_blank')"><span class="icon">📷</span> ماسح QR</button>
     <div class="sidebar-footer">الجلسة آمنة 🔒</div>
   </div>
 
   <div class="main-content">
-
     <div class="reg-banner">
       <span>حالة التسجيل:</span>
       <span class="reg-state" id="reg-state">…</span>
@@ -235,7 +229,7 @@
 
     <div id="page-messages" class="page">
       <div class="page-header">
-        <div><div class="page-title">رسائل التهاني</div><div class="page-subtitle">كلمات وتهاني الضيوف لحاتم ومآثر</div></div>
+        <div><div class="page-title">رسائل وصدقات</div><div class="page-subtitle">كلمات وتهاني الضيوف مع مبالغ الصدقات</div></div>
         <button class="btn btn-green" onclick="loadMessages()">🔄 تحديث</button>
       </div>
       <div class="table-wrap"><div id="messages-list" style="padding:8px 0"><div class="empty-state"><div class="emoji">⏳</div>جاري التحميل...</div></div></div>
@@ -262,11 +256,8 @@
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCGE091Gl-57ddjdnOrk9cWZpHHmhTDm_v0_ngzGDjcLU0CUXdpO8FdTfeM97FQ4Xl/exec';
 const ADMIN_PASSWORD = 'wedding2026'; 
-
 const FRAME = { url: 'frame.png', width: 1240, height: 1748, qr: { x: 489, y: 743, size: 262, pad: 12 }, name: { y: 1060, size: 44, color: '#1B5E20' }, code: { y: 1110, size: 32, color: '#2E7D32' } };
-
-let allGuests = [];
-let regOpen = true;
+let allGuests = []; let regOpen = true;
 
 function callScriptOnce(params, timeoutMs) { return new Promise((resolve, reject) => { const cb = 'cb_' + Date.now() + '_' + Math.floor(Math.random()*1e6); const script = document.createElement('script'); const timer = setTimeout(() => { cleanup(); reject(new Error('timeout')); }, timeoutMs || 30000); function cleanup(){ clearTimeout(timer); try{delete window[cb];}catch(e){window[cb]=undefined;} if(script.parentNode) script.parentNode.removeChild(script); } window[cb] = (data) => { cleanup(); resolve(data); }; const qs = new URLSearchParams(Object.assign({}, params, {callback:cb})).toString(); script.src = SCRIPT_URL + '?' + qs + '&_=' + Date.now(); script.onerror = () => { cleanup(); reject(new Error('network')); }; document.head.appendChild(script); }); }
 async function callScript(params, attempts) { attempts = attempts || 3; let lastErr; for (let i = 0; i < attempts; i++) { try { return await callScriptOnce(params, 30000); } catch (e) { lastErr = e; await new Promise(r => setTimeout(r, 1500)); } } throw lastErr; }
@@ -284,7 +275,28 @@ function renderGuests(list) { const guests = list || allGuests; const tbody = do
 function filterGuests() { const q = document.getElementById('guest-search').value.toLowerCase(); const status = document.getElementById('filter-status').value; const filtered = allGuests.filter(g => { const mq = !q || String(g.name).toLowerCase().includes(q) || String(g.code).toLowerCase().includes(q); const ms = status==='all' || (status==='attended'&&g.attended) || (status==='pending'&&!g.attended); return mq && ms; }); renderGuests(filtered); }
 function updateStats() { const total = allGuests.length; const attended = allGuests.filter(g=>g.attended).length; document.getElementById('stat-total').textContent = total; document.getElementById('stat-attended').textContent = attended; document.getElementById('stat-pending').textContent = total-attended; document.getElementById('stat-pct').textContent = (total?Math.round(attended/total*100):0)+'%'; }
 
-async function loadMessages() { try { const data = await callScript({ action:'getmessages' }); const msgs = (data && data.messages) || []; const list = document.getElementById('messages-list'); if (!msgs.length) { list.innerHTML = '<div class="empty-state"><div class="emoji">💌</div>لا توجد رسائل بعد</div>'; } else { list.innerHTML = msgs.map(m => `<div class="log-entry" style="display:block;border-bottom:1px solid var(--sand);padding:16px 20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong style="color:var(--night);font-size:16px">${esc(m.name)}</strong><span class="log-time">${esc(m.time)}</span></div><div style="font-size:15px;color:var(--ink);line-height:1.6;white-space:pre-wrap">${esc(m.message)}</div></div>`).join(''); } } catch(e) { document.getElementById('messages-list').innerHTML = '<div class="empty-state"><div class="emoji">⚠️</div>تعذّر تحميل الرسائل</div>'; } }
+// تم تعديل هذه الدالة لإظهار المبلغ
+async function loadMessages() { 
+  try { 
+    const data = await callScript({ action:'getmessages' }); 
+    const msgs = (data && data.messages) || []; 
+    const list = document.getElementById('messages-list'); 
+    if (!msgs.length) { 
+      list.innerHTML = '<div class="empty-state"><div class="emoji">💌</div>لا توجد رسائل بعد</div>'; 
+    } else { 
+      list.innerHTML = msgs.map(m => `
+        <div class="log-entry" style="display:block;border-bottom:1px solid var(--sand);padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <strong style="color:var(--night);font-size:16px">${esc(m.name)}</strong>
+            <span class="log-time">${esc(m.time)} ${m.amount && m.amount !== '0' ? '· '+esc(m.amount)+' ر.ع' : ''}</span>
+          </div>
+          <div style="font-size:15px;color:var(--ink);line-height:1.6;white-space:pre-wrap">${esc(m.message)}</div>
+        </div>`).join(''); 
+    } 
+  } catch(e) { 
+    document.getElementById('messages-list').innerHTML = '<div class="empty-state"><div class="emoji">⚠️</div>تعذّر تحميل الرسائل</div>'; 
+  } 
+}
 
 function makeQrCanvas(text, size) { const holder = document.createElement('div'); holder.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(holder); new QRCode(holder, { text:text, width:size, height:size, colorDark:'#1B5E20', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.H }); const cv = holder.querySelector('canvas'); const out = document.createElement('canvas'); out.width = size; out.height = size; out.getContext('2d').drawImage(cv, 0, 0, size, size); holder.remove(); return out; }
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
