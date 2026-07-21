@@ -99,18 +99,21 @@
   .rsvp-title { font-family: 'Aref Ruqaa',serif; font-size: clamp(26px, 5.5vw, 42px); font-weight: 700; color: var(--charcoal); margin-bottom: 8px; line-height: 1.3; }
   .rsvp-subtitle { font-size: 14px; color: var(--warm-gray); margin-bottom: 32px; }
   .form-group { margin-bottom: 16px; text-align: right; }
-  .form-group label { display: block; font-size: 13px; color: var(--warm-gray); margin-bottom: 6px; }
-  .form-group input, .form-group textarea { width: 100%; padding: 13px 16px; border: 1.5px solid var(--ivory); border-radius: 10px; background: rgba(255,255,255,0.9); font-size: 16px; color: var(--charcoal); outline: none; transition: border-color 0.2s; text-align: right; }
-  .form-group textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
-  .form-group input:focus, .form-group textarea:focus { border-color: var(--green); background: #fff; }
+  .form-group label { display: block; font-size: 14px; color: #2f4a37; margin-bottom: 6px; font-weight: 500; }
+  .form-group input, .form-group textarea { width: 100%; padding: 12px 14px; border: 1px solid #b8cbab; border-radius: 10px; font-family: 'Amiri Quran','Amiri',serif; font-size: 15px; margin-bottom: 20px; background: #fbfaf2; color: #24382b; outline: none; transition: 0.2s; text-align: right; }
+  .form-group textarea { min-height: 90px; resize: none; }
+  .form-group input:focus, .form-group textarea:focus { border-color: #4c7a5a; }
+  
+  /* أزرار المبالغ المحدثة */
+  .amount-row { display: flex; gap: 8px; margin-bottom: 20px; }
+  .amount-btn { flex: 1; padding: 10px 0; border: 1px solid #b8cbab; background: #fbfaf2; border-radius: 8px; cursor: pointer; font-family: 'Amiri',serif; font-size: 14px; color: #2f4a37; transition: 0.2s; }
+  .amount-btn.active, .amount-btn:hover { background: #2f5b3f; color: #fff; border-color: #2f5b3f; }
+  .don-submit-btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #1c3327, #2f5b3f); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-family: 'Amiri',serif; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 8px; }
+  .don-submit-btn:hover { opacity: 0.9; }
+  .donation-note { text-align: center; font-size: 12px; color: #7a8f78; margin-top: 14px; line-height: 1.6; }
+
   .submit-btn { width: 100%; padding: 15px; background: var(--green); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 8px; box-shadow: 0 4px 20px rgba(46,125,50,0.3); }
   .submit-btn:hover { background: var(--green-dark); } .submit-btn:active { transform: scale(0.98); } .submit-btn:disabled { background: var(--warm-gray); cursor: not-allowed; }
-  
-  /* أزرار المبالغ */
-  .amount-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-  .amount-btn { flex: 1; min-width: 70px; padding: 10px 0; border: 1.5px solid var(--ivory); background: #fff; border-radius: 8px; cursor: pointer; font-family: 'Amiri',serif; font-size: 14px; color: var(--charcoal); transition: 0.2s; }
-  .amount-btn.active, .amount-btn:hover { background: var(--green); color: #fff; border-color: var(--green); }
-  .donation-note { text-align: center; font-size: 12px; color: var(--warm-gray); margin-top: 14px; line-height: 1.6; }
 
   @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   .msg { padding: 12px 16px; border-radius: 10px; margin-top: 12px; font-size: 14px; }
@@ -257,28 +260,28 @@
   </div>
 </section>
 
-<!-- قسم التهنئة والصدقة -->
+<!-- قسم التهنئة والصدقة المحدث بالكامل -->
 <section id="guestbook">
   <img src="flower4.png" class="deco-img deco-left" alt="زخرفة">
   <img src="flower5.png" class="deco-img deco-right" alt="زخرفة">
 
   <div class="rsvp-box">
     <div class="section-ornament">❁ ✦ ❁</div>
-    <h2 class="rsvp-title">تهنئة وصدقة للعروسين 💛</h2>
-    <p class="rsvp-subtitle">شاركونا فرحتنا بكلمة طيبة وصدقة جارية تصل عبر PayPal</p>
+    <h2 class="rsvp-title">تهانينا للعروسين 💛</h2>
+    <p class="rsvp-subtitle">اكتب رسالتك وشاركهم فرحتهم بصدقة رمزية</p>
     
     <div id="don-form">
       <div class="form-group">
         <label for="don-name">الاسم *</label>
-        <input type="text" id="don-name" placeholder="اكتب اسمك هنا" autocomplete="name">
+        <input type="text" id="don-name" placeholder="اكتب اسمك هنا">
       </div>
       <div class="form-group">
-        <label for="don-message">رسالتك للعروسين *</label>
-        <textarea id="don-message" placeholder="بارك الله لكما وبارك عليكما..." rows="3"></textarea>
+        <label for="don-message">رسالتك للعروسين</label>
+        <textarea id="don-message" placeholder="بارك الله لكما وبارك عليكما..." maxlength="200"></textarea>
       </div>
-      
+
       <div class="form-group">
-        <label>المبلغ (ر.ع) *</label>
+        <label for="don-amount">المبلغ (ر.ع)</label>
         <div class="amount-row">
           <button type="button" class="amount-btn" data-amount="0.500">500 بيسة</button>
           <button type="button" class="amount-btn" data-amount="1.000">1 ر.ع</button>
@@ -288,9 +291,10 @@
         <input type="number" id="don-amount" min="0.500" step="0.001" placeholder="أو اكتب مبلغ آخر (ر.ع)">
       </div>
 
-      <button class="submit-btn" id="don-submit-btn" onclick="submitDonation()">إرسال التهنئة والصدقة 💌</button>
+      <button class="don-submit-btn" id="don-submit-btn" onclick="submitDonation()">إرسال الصدقة 💌</button>
       <div id="don-form-msg"></div>
-      <p class="donation-note">سيتم تحويلك إلى PayPal لإتمام العملية بأمان<br>(الدفع يتم بالدولار حسب سعر الصرف التقريبي)</p>
+      <p class="donation-note">سيتم تحويلك إلى PayPal لإتمام العملية بأمان (الدفع يتم بالدولار حسب سعر صرف تقريبي)</p>
+      <p class="donation-note">معظم الصدقات ستذهب للتبرع الخيري وليست لغرض الربح</p>
     </div>
   </div>
 </section>
@@ -361,7 +365,7 @@ function showSuccess(name, code) {
 }
 
 // ==============================================
-// نظام التهنئة والصدقة (PayPal)
+// نظام التهنئة والصدقة المحدث
 // ==============================================
 const donAmountInput = document.getElementById('don-amount');
 const donButtons = document.querySelectorAll('.amount-btn');
@@ -404,23 +408,24 @@ async function submitDonation() {
     if (res.status === 'success') {
       btn.textContent = 'جاري التحويل لـ PayPal...';
       
-      // 2. التحويل إلى PayPal
+      // 2. التحويل إلى PayPal (تم استخدام _xclick كما في كودك)
       const USD_TO_OMR_RATE = 0.385;
       const usdAmount = (omrAmount / USD_TO_OMR_RATE).toFixed(2);
       
       const form = document.createElement('form');
       form.method = 'post';
       form.action = 'https://www.paypal.com/cgi-bin/webscr';
-      form.target = '_blank'; // فتح في نافذة جديدة
+      form.target = '_blank';
 
       const fields = {
-        cmd: '_donations',
-        business: 'Maan991xx@gmail.com', // ضع بريد PayPal الخاص بك هنا
-        item_name: 'صدقة وتهنئة للعروسين',
+        cmd: '_xclick',
+        business: 'Maan991xx@gmail.com',
+        item_name: 'صدقة للعروسين',
         currency_code: 'USD',
         amount: usdAmount,
         custom: message || 'بدون رسالة',
-        no_shipping: '1'
+        no_shipping: '1',
+        no_note: '1'
       };
 
       for (const key in fields) {
@@ -443,7 +448,7 @@ async function submitDonation() {
   } catch(e) {
     msgEl.innerHTML = '<div class="msg msg-error">⚠️ تعذّر الاتصال بالخادم — تأكد من الإنترنت</div>';
   }
-  btn.disabled = false; btn.textContent = 'إرسال التهنئة والصدقة 💌';
+  btn.disabled = false; btn.textContent = 'إرسال الصدقة 💌';
 }
 
 function makeQrCanvas(text, size) { const holder = document.createElement('div'); holder.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(holder); new QRCode(holder, { text:text, width:size, height:size, colorDark:'#1B5E20', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.H }); const cv = holder.querySelector('canvas'); const out = document.createElement('canvas'); out.width = size; out.height = size; out.getContext('2d').drawImage(cv, 0, 0, size, size); holder.remove(); return out; }
