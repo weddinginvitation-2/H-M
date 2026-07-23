@@ -138,7 +138,7 @@
     <button class="nav-item" onclick="showPage('guests',this)"><span class="icon">👥</span> إدارة الضيوف</button>
     <button class="nav-item" onclick="showPage('attendance',this)"><span class="icon">✅</span> سجل الحضور</button>
     <button class="nav-item" onclick="showPage('add-guest',this)"><span class="icon">➕</span> إضافة ضيف</button>
-    <button class="nav-item" onclick="showPage('messages',this)"><span class="icon">💌</span> رسائل وصدقات</button>
+    <button class="nav-item" onclick="showPage('messages',this)"><span class="icon">💌</span> رسائل التهاني</button>
     <button class="nav-item" onclick="window.open('scanner.html','_blank')"><span class="icon">📷</span> ماسح QR</button>
     <div class="sidebar-footer">الجلسة آمنة 🔒</div>
   </div>
@@ -229,7 +229,7 @@
 
     <div id="page-messages" class="page">
       <div class="page-header">
-        <div><div class="page-title">رسائل وصدقات</div><div class="page-subtitle">كلمات وتهاني الضيوف مع مبالغ الصدقات</div></div>
+        <div><div class="page-title">رسائل التهاني</div><div class="page-subtitle">كلمات وتهاني الضيوف لحاتم ومآثر</div></div>
         <button class="btn btn-green" onclick="loadMessages()">🔄 تحديث</button>
       </div>
       <div class="table-wrap"><div id="messages-list" style="padding:8px 0"><div class="empty-state"><div class="emoji">⏳</div>جاري التحميل...</div></div></div>
@@ -275,28 +275,7 @@ function renderGuests(list) { const guests = list || allGuests; const tbody = do
 function filterGuests() { const q = document.getElementById('guest-search').value.toLowerCase(); const status = document.getElementById('filter-status').value; const filtered = allGuests.filter(g => { const mq = !q || String(g.name).toLowerCase().includes(q) || String(g.code).toLowerCase().includes(q); const ms = status==='all' || (status==='attended'&&g.attended) || (status==='pending'&&!g.attended); return mq && ms; }); renderGuests(filtered); }
 function updateStats() { const total = allGuests.length; const attended = allGuests.filter(g=>g.attended).length; document.getElementById('stat-total').textContent = total; document.getElementById('stat-attended').textContent = attended; document.getElementById('stat-pending').textContent = total-attended; document.getElementById('stat-pct').textContent = (total?Math.round(attended/total*100):0)+'%'; }
 
-// تم تعديل هذه الدالة لإظهار المبلغ
-async function loadMessages() { 
-  try { 
-    const data = await callScript({ action:'getmessages' }); 
-    const msgs = (data && data.messages) || []; 
-    const list = document.getElementById('messages-list'); 
-    if (!msgs.length) { 
-      list.innerHTML = '<div class="empty-state"><div class="emoji">💌</div>لا توجد رسائل بعد</div>'; 
-    } else { 
-      list.innerHTML = msgs.map(m => `
-        <div class="log-entry" style="display:block;border-bottom:1px solid var(--sand);padding:16px 20px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <strong style="color:var(--night);font-size:16px">${esc(m.name)}</strong>
-            <span class="log-time">${esc(m.time)} ${m.amount && m.amount !== '0' ? '· '+esc(m.amount)+' ر.ع' : ''}</span>
-          </div>
-          <div style="font-size:15px;color:var(--ink);line-height:1.6;white-space:pre-wrap">${esc(m.message)}</div>
-        </div>`).join(''); 
-    } 
-  } catch(e) { 
-    document.getElementById('messages-list').innerHTML = '<div class="empty-state"><div class="emoji">⚠️</div>تعذّر تحميل الرسائل</div>'; 
-  } 
-}
+async function loadMessages() { try { const data = await callScript({ action:'getmessages' }); const msgs = (data && data.messages) || []; const list = document.getElementById('messages-list'); if (!msgs.length) { list.innerHTML = '<div class="empty-state"><div class="emoji">💌</div>لا توجد رسائل بعد</div>'; } else { list.innerHTML = msgs.map(m => `<div class="log-entry" style="display:block;border-bottom:1px solid var(--sand);padding:16px 20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong style="color:var(--night);font-size:16px">${esc(m.name)}</strong><span class="log-time">${esc(m.time)}</span></div><div style="font-size:15px;color:var(--ink);line-height:1.6;white-space:pre-wrap">${esc(m.message)}</div></div>`).join(''); } } catch(e) { document.getElementById('messages-list').innerHTML = '<div class="empty-state"><div class="emoji">⚠️</div>تعذّر تحميل الرسائل</div>'; } }
 
 function makeQrCanvas(text, size) { const holder = document.createElement('div'); holder.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(holder); new QRCode(holder, { text:text, width:size, height:size, colorDark:'#1B5E20', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.H }); const cv = holder.querySelector('canvas'); const out = document.createElement('canvas'); out.width = size; out.height = size; out.getContext('2d').drawImage(cv, 0, 0, size, size); holder.remove(); return out; }
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
